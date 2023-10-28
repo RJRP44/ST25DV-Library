@@ -1,0 +1,2 @@
+version: "0.0.1"
+description: A st25dv library for esp32 using the esp-idf framework.
