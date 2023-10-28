@@ -1,3 +1,9 @@
+/*
+ * Written by RJRP - 28/10/2023
+ * ST25 Library for idf framework
+ * This program is distributed under the MIT License
+ */
+
 #include <stdio.h>
 #include "ST25DV.h"
 #include "driver/i2c.h"
