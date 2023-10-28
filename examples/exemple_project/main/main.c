@@ -21,4 +21,10 @@ void app_main(void)
     st25_read_byte(ST25_USER_ADDRESS, 0x00, &value);
 
     printf("Reading 0x00 value : 0x%02X\n", value);
+
+    //Read a bit from the gpo register
+    bool bit_value = 0;
+    st25_read_bit(ST25_SYSTEM_ADDRESS, REG_GPO1, BIT_GPO1_GPO_EN, &bit_value);
+
+    printf("Reading REG_GPO1 EN bit : 0x%02X\n", bit_value);
 }

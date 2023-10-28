@@ -3,7 +3,7 @@
 #include "driver/i2c.h"
 
 
-esp_err_t st25_write_byte(uint8_t st25_address, uint8_t address, uint8_t byte) {
+esp_err_t st25_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte) {
 
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -22,7 +22,7 @@ esp_err_t st25_write_byte(uint8_t st25_address, uint8_t address, uint8_t byte) {
     return ret;
 }
 
-esp_err_t st25_read_byte(uint8_t st25_address, uint8_t address, uint8_t *byte) {
+esp_err_t st25_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte) {
 
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -41,6 +41,40 @@ esp_err_t st25_read_byte(uint8_t st25_address, uint8_t address, uint8_t *byte) {
     i2c_cmd_link_delete(cmd);
 
     return ret;
+}
+
+esp_err_t st25_write_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool bit){
+
+    uint8_t byte = 0;
+    esp_err_t ret;
+    ret = st25_read_byte(st25_address,address,&byte);
+
+    if(ret != ESP_OK){
+        return ret;
+    }
+
+    if (bit){
+        byte |= bit_mask;
+    }else{
+        byte &= ~bit_mask;
+    }
+
+    ret = st25_write_byte(st25_address,address,byte);
+
+    return ret;
+}
+
+esp_err_t st25_read_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool *bit){
+    uint8_t byte = 0;
+    esp_err_t ret;
+    ret = st25_read_byte(st25_address,address,&byte);
+
+    if(ret != ESP_OK){
+        return ret;
+    }
+
+    *bit = (byte & bit_mask);
+    return ESP_OK;
 }
 
 esp_err_t st25_init_i2c(i2c_port_t port, i2c_config_t config){
