@@ -7,6 +7,7 @@
 #include <driver/i2c.h>
 #include <st25dv.h>
 #include <st25dv_registers.h>
+#include <st25dv_ndef.h>
 #include <string.h>
 
 void app_main(void) {
@@ -32,7 +33,7 @@ void app_main(void) {
     //Read text from the st25dv
     uint8_t read_text[10];
     read_text[9] = '\0';
-    st25dv_read(ST25DV_USER_ADDRESS,0x00,read_text,9);
+    st25dv_read(ST25DV_USER_ADDRESS, 0x00, read_text, 9);
 
     printf("Reading 0x00 text : %s\n", read_text);
 
@@ -50,11 +51,17 @@ void app_main(void) {
 
     printf("Clearing from 0x00 to 0x200\n");
 
+    //Wait before writing again
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    //Write a text to the st25dv
-    uint8_t text[] = "Hello World !";
-    st25dv_write(ST25DV_USER_ADDRESS, 0x00, text, sizeof(text));
+    //Write Capacity Container File
+    st25dv_ndef_write_ccfile(0x00040000010040E2);
+    printf("Writing CC File\n");
 
-    printf("Writing %s at address 0x00\n", text);
+    //Wait before writing again
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    //Ndef record
+    char app_package[] = "fr.ouchat.app";
+    st25dv_ndef_write_app_launcher_record(ST25DV_USER_ADDRESS, app_package);
 }
