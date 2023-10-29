@@ -10,8 +10,10 @@ This is a library for ST's [ST25DV-I2C series](https://www.st.com/en/nfc/st25dv-
 > This Library is **not** compatible with Arduino framework
 
 ## 📌 Contents
+* [Ndef](#ndef)
 * [Example](#example)
-
+### Ndef
+The ndef support is not complete, only the external record can be writen. Feel free to improve it and add other records support.
 ### Example
 You can find in the `📁 /examples` folder an example project demonstrating the main features of the library.
 
