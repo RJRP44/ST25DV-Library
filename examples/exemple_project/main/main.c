@@ -5,8 +5,8 @@
  */
 
 #include <driver/i2c.h>
-#include <st25.h>
-#include <st25_registers.h>
+#include <st25dv.h>
+#include <st25dv_registers.h>
 
 void app_main(void)
 {
@@ -17,21 +17,21 @@ void app_main(void)
             .scl_io_num = 2,
             .sda_pullup_en = GPIO_PULLUP_ENABLE,
             .scl_pullup_en = GPIO_PULLUP_ENABLE,
-            .master.clk_speed = ST25_MAX_CLK_SPEED,
+            .master.clk_speed = ST25DV_MAX_CLK_SPEED,
     };
 
     //Apply, init the configuration to the bus
-    st25_init_i2c(I2C_NUM_1, i2c_config);
+    st25dv_init_i2c(I2C_NUM_1, i2c_config);
 
     //Read a byte from the st25
     uint8_t value = 0;
-    st25_read_byte(ST25_USER_ADDRESS, 0x00, &value);
+    st25dv_read_byte(ST25DV_USER_ADDRESS, 0x00, &value);
 
     printf("Reading 0x00 value : 0x%02X\n", value);
 
     //Read a bit from the gpo register
     bool bit_value = 0;
-    st25_read_bit(ST25_SYSTEM_ADDRESS, REG_GPO1, BIT_GPO1_GPO_EN, &bit_value);
+    st25dv_read_bit(ST25DV_SYSTEM_ADDRESS, REG_GPO1, BIT_GPO1_GPO_EN, &bit_value);
 
     printf("Reading REG_GPO1 EN bit : 0x%02X\n", bit_value);
 }

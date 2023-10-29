@@ -5,11 +5,11 @@
  */
 
 #include <stdio.h>
-#include "st25.h"
+#include "st25dv.h"
 #include "driver/i2c.h"
 
 
-esp_err_t st25_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte) {
+esp_err_t st25dv_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte) {
 
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -28,7 +28,7 @@ esp_err_t st25_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte) 
     return ret;
 }
 
-esp_err_t st25_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte) {
+esp_err_t st25dv_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte) {
 
     esp_err_t ret;
     i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -49,7 +49,7 @@ esp_err_t st25_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte) 
     return ret;
 }
 
-esp_err_t st25_write_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool bit){
+esp_err_t st25dv_write_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool bit){
 
     uint8_t byte = 0;
     esp_err_t ret;
@@ -70,7 +70,7 @@ esp_err_t st25_write_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mas
     return ret;
 }
 
-esp_err_t st25_read_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool *bit){
+esp_err_t st25dv_read_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool *bit){
     uint8_t byte = 0;
     esp_err_t ret;
     ret = st25_read_byte(st25_address,address,&byte);
@@ -83,7 +83,7 @@ esp_err_t st25_read_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask
     return ESP_OK;
 }
 
-esp_err_t st25_init_i2c(i2c_port_t port, i2c_config_t config){
+esp_err_t st25dv_init_i2c(i2c_port_t port, i2c_config_t config){
     i2c_param_config(port, &config);
     i2c_set_timeout(port, 0x0000001FU);
 
