@@ -22,3 +22,6 @@ esp_err_t st25dv_write_bit(uint8_t st25_address, uint16_t address, uint8_t bit_m
 esp_err_t st25dv_read_bit(uint8_t st25_address, uint16_t address, uint8_t bit_mask, bool *bit);
 
 esp_err_t st25dv_init_i2c(i2c_port_t port, i2c_config_t config);
+
+esp_err_t st25dv_write(uint8_t st25_address, uint16_t address, uint8_t *data, size_t size);
+esp_err_t st25dv_read(uint8_t st25_address, uint16_t address, uint8_t *data, size_t size);
