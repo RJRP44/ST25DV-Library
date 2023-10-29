@@ -5,7 +5,8 @@
  */
 
 #include <driver/i2c.h>
-#include <ST25DV.h>
+#include <st25.h>
+#include <st25_registers.h>
 
 void app_main(void)
 {

@@ -5,7 +5,7 @@
  */
 
 #include <stdio.h>
-#include "ST25DV.h"
+#include "st25.h"
 #include "driver/i2c.h"
 
 
