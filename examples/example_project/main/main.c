@@ -64,4 +64,14 @@ void app_main(void) {
     //Ndef record
     char app_package[] = "fr.ouchat.app";
     st25dv_ndef_write_app_launcher_record(ST25DV_USER_ADDRESS, app_package);
+
+    vTaskDelay(100 / portTICK_PERIOD_MS);
+
+    //Start I²C session
+    st25dv_open_session(ST25DV_SYSTEM_ADDRESS, 0x0000000000000000);
+
+    bool session = false;
+    st25dv_is_session_opened(ST25DV_USER_ADDRESS, &session);
+
+    printf("I2C session : 0x%X\n",session);
 }

@@ -4,7 +4,8 @@
  * This program is distributed under the MIT License
  */
 
-#include <stdio.h>
+#include <memory.h>
+#include <st25dv_registers.h>
 #include "st25dv.h"
 #include "driver/i2c.h"
 
@@ -36,7 +37,7 @@ esp_err_t st25dv_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte
 
     //St25 Read sequence :
     i2c_master_write_byte(cmd, (st25_address << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN);
-    i2c_master_write_byte(cmd, address << 8, ACK_CHECK_EN);
+    i2c_master_write_byte(cmd, address >> 8, ACK_CHECK_EN);
     i2c_master_write_byte(cmd, address & 0xFF, ACK_CHECK_EN);
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (st25_address << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
@@ -131,3 +132,15 @@ esp_err_t st25dv_read(uint8_t st25_address, uint16_t address, uint8_t *data, siz
     return ret;
 }
 
+esp_err_t st25dv_open_session(uint8_t st25_address, uint64_t password){
+    uint8_t buffer[8 * 2 + 1] = {0};
+    uint8_t *buffer_ptr = buffer + 9;
+    memcpy(buffer, &password, sizeof(password));
+    buffer[8] = 0x09;
+    memcpy(buffer_ptr, &password, sizeof(password));
+    return st25dv_write(st25_address, REG_I2C_PASSWD_BASE,buffer, 17);
+}
+
+esp_err_t st25dv_is_session_opened(uint8_t st25_address, bool *bit){
+    return st25dv_read_bit(st25_address, REG_I2C_SSO_DYN, BIT_I2C_SSO_DYN_I2C_SSO, bit);
+}
