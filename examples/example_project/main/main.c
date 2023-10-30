@@ -61,9 +61,16 @@ void app_main(void) {
     //Wait before writing again
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
-    //Ndef record
+    //Ndef records
     char app_package[] = "fr.ouchat.app";
-    st25dv_ndef_write_app_launcher_record(ST25DV_USER_ADDRESS, app_package);
+    uint16_t address = CCFILE_LENGTH;
+    st25dv_ndef_write_app_launcher_record(ST25DV_USER_ADDRESS, &address, true, false, app_package);
+
+    cJSON *monitor = cJSON_CreateObject();
+    cJSON_AddNumberToObject(monitor, "height", 720);
+    cJSON_AddNumberToObject(monitor, "width", 1280);
+    st25dv_ndef_write_json_record(ST25DV_USER_ADDRESS, &address,false,true,monitor);
+    cJSON_Delete(monitor);
 
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
@@ -73,5 +80,5 @@ void app_main(void) {
     bool session = false;
     st25dv_is_session_opened(ST25DV_USER_ADDRESS, &session);
 
-    printf("I2C session : 0x%X\n",session);
+    printf("I2C session : 0x%X\n", session);
 }
