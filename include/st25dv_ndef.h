@@ -37,14 +37,14 @@
 #define NDEF_ST25DV_TNF_RESERVED 0x07
 
 typedef struct {
-    uint8_t ndef_type;
+    uint8_t tnf;
     char *type;
     char *payload;
 } std25dv_ndef_record;
 
 esp_err_t st25dv_ndef_write_ccfile(uint64_t ccfile);
 
-static esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, std25dv_ndef_record record);
+esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, std25dv_ndef_record record);
 esp_err_t st25dv_ndef_write_app_launcher_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, char *app_package);
 esp_err_t st25dv_ndef_write_json_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, cJSON *json_data);
 

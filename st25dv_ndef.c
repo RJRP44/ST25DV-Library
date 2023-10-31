@@ -14,7 +14,7 @@ esp_err_t st25dv_ndef_write_ccfile(uint64_t ccfile) {
     return st25dv_write(ST25DV_USER_ADDRESS, 0x00, ccbyte, sizeof(ccfile));
 }
 
-static esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, const std25dv_ndef_record record) {
+esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, const std25dv_ndef_record record) {
     uint8_t type_size = strlen(record.type);
     uint16_t payload_size = strlen(record.payload);
 
@@ -45,7 +45,7 @@ static esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *addre
     tnf |= me ? NDEF_ST25DV_ME : 0;
     tnf |= payload_size > 0xFF ? 0 : NDEF_ST25DV_SR;
     tnf |= NDEF_ST25DV_IL;
-    tnf |= record.ndef_type;
+    tnf |= record.tnf;
     *data++ = tnf;
 
     //Type length
@@ -245,7 +245,7 @@ esp_err_t st25dv_ndef_read(st25dv_config st25dv, uint8_t record_num, std25dv_nde
 
         if(*record_count == record_num){
             //Add payload type to the output
-            output_records->ndef_type = payload_type;
+            output_records->tnf = payload_type;
 
             //Get type and add it to the output
             char *type = malloc(type_length + 1);
