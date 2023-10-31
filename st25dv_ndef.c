@@ -42,8 +42,8 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
 
     //Type5 Tag TLV-Format: V
     uint8_t tnf = 0;
-    tnf |= NDEF_ST25DV_MB;
-    tnf |= NDEF_ST25DV_ME;
+    tnf |= mb ? NDEF_ST25DV_MB : 0;
+    tnf |= me ? NDEF_ST25DV_ME : 0;
     tnf |= payload_size > 0xFF ? 0 : NDEF_ST25DV_SR;
     tnf |= NDEF_ST25DV_IL;
     tnf |= record.ndef_type;
