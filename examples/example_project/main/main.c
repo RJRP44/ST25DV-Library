@@ -81,4 +81,16 @@ void app_main(void) {
     st25dv_is_session_opened(ST25DV_USER_ADDRESS, &session);
 
     printf("I2C session : 0x%X\n", session);
+
+    //Read the 2nd record
+    std25dv_ndef_record *read = malloc(sizeof(std25dv_ndef_record));
+    memset(read, 0 , sizeof(std25dv_ndef_record));
+    uint8_t record_num = 2;
+    uint8_t record_count = 0;
+
+    st25dv_ndef_read(ST25DV_USER_ADDRESS,record_num,read,&record_count);
+    printf("Record %d type : %s\n", record_num, read->type);
+
+    //Delete record after use
+    st25dv_ndef_delete_records(read);
 }

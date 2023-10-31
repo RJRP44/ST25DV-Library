@@ -13,6 +13,10 @@
 #define ST25DV_USER_ADDRESS 0x53
 #define ST25DV_SYSTEM_ADDRESS 0x57
 
+#define ST25DV_CHECK(check) if(!(check)) {          \
+        return ESP_FAIL;                            \
+        }
+
 #define ACK_CHECK_EN 0x1
 
 esp_err_t st25dv_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte);
