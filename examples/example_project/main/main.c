@@ -5,7 +5,6 @@
  */
 
 #include <driver/i2c.h>
-#include <st25dv.h>
 #include <st25dv_registers.h>
 #include <st25dv_ndef.h>
 #include <string.h>
@@ -19,6 +18,11 @@ void app_main(void) {
             .sda_pullup_en = GPIO_PULLUP_ENABLE,
             .scl_pullup_en = GPIO_PULLUP_ENABLE,
             .master.clk_speed = ST25DV_MAX_CLK_SPEED,
+    };
+
+    st25dv_config st25dv_config = {
+            ST25DV_USER_ADDRESS,
+            ST25DV_SYSTEM_ADDRESS
     };
 
     //Apply, init the configuration to the bus
@@ -64,12 +68,12 @@ void app_main(void) {
     //Ndef records
     char app_package[] = "fr.ouchat.app";
     uint16_t address = CCFILE_LENGTH;
-    st25dv_ndef_write_app_launcher_record(ST25DV_USER_ADDRESS, &address, true, false, app_package);
+    st25dv_ndef_write_app_launcher_record(st25dv_config, &address, true, false, app_package);
 
     cJSON *monitor = cJSON_CreateObject();
     cJSON_AddNumberToObject(monitor, "height", 720);
     cJSON_AddNumberToObject(monitor, "width", 1280);
-    st25dv_ndef_write_json_record(ST25DV_USER_ADDRESS, &address,false,true,monitor);
+    st25dv_ndef_write_json_record(st25dv_config, &address,false,true,monitor);
     cJSON_Delete(monitor);
 
     vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -88,7 +92,7 @@ void app_main(void) {
     uint8_t record_num = 2;
     uint8_t record_count = 0;
 
-    st25dv_ndef_read(ST25DV_USER_ADDRESS,record_num,read,&record_count);
+    st25dv_ndef_read(st25dv_config,record_num,read,&record_count);
     printf("Record %d type : %s\n", record_num, read->type);
 
     //Delete record after use

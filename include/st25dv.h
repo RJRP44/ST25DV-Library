@@ -19,6 +19,11 @@
 
 #define ACK_CHECK_EN 0x1
 
+typedef struct {
+    uint8_t user_address;
+    uint8_t system_address;
+} st25dv_config;
+
 esp_err_t st25dv_write_byte(uint8_t st25_address, uint16_t address, uint8_t byte);
 esp_err_t st25dv_read_byte(uint8_t st25_address, uint16_t address, uint8_t *byte);
 

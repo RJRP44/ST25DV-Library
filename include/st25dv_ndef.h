@@ -7,6 +7,7 @@
 #include <esp_err.h>
 #include <stdbool.h>
 #include <cJson.h>
+#include "st25dv.h"
 
 #define ST25DV_TYPE5_NDEF_MESSAGE 0x03
 #define ST25DV_TYPE5_TERMINATOR_TLV 0xFE
@@ -43,9 +44,9 @@ typedef struct {
 
 esp_err_t st25dv_ndef_write_ccfile(uint64_t ccfile);
 
-static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *address, bool mb, bool me, std25dv_ndef_record record);
-esp_err_t st25dv_ndef_write_app_launcher_record(uint8_t st25_address, uint16_t *address, bool mb, bool me, char *app_package);
-esp_err_t st25dv_ndef_write_json_record(uint8_t st25_address, uint16_t *address, bool mb, bool me, cJSON *json_data);
+static esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, std25dv_ndef_record record);
+esp_err_t st25dv_ndef_write_app_launcher_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, char *app_package);
+esp_err_t st25dv_ndef_write_json_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, cJSON *json_data);
 
-esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_ndef_record *output_records, uint8_t *record_count);
+esp_err_t st25dv_ndef_read(st25dv_config st25dv, uint8_t record_num, std25dv_ndef_record *output_records, uint8_t *record_count);
 esp_err_t st25dv_ndef_delete_records(std25dv_ndef_record *record);

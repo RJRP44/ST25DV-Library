@@ -7,7 +7,6 @@
 #include <memory.h>
 #include "st25dv_ndef.h"
 #include "st25dv_registers.h"
-#include "st25dv.h"
 
 esp_err_t st25dv_ndef_write_ccfile(uint64_t ccfile) {
     uint8_t ccbyte[8];
@@ -15,7 +14,7 @@ esp_err_t st25dv_ndef_write_ccfile(uint64_t ccfile) {
     return st25dv_write(ST25DV_USER_ADDRESS, 0x00, ccbyte, sizeof(ccfile));
 }
 
-static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *address, bool mb, bool me, const std25dv_ndef_record record) {
+static esp_err_t st25dv_ndef_write_content(st25dv_config st25dv, uint16_t *address, bool mb, bool me, const std25dv_ndef_record record) {
     uint8_t type_size = strlen(record.type);
     uint16_t payload_size = strlen(record.payload);
 
@@ -84,7 +83,7 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
 
         //Read the possible 3 byte l value
         uint8_t *l_value = malloc(0x03);
-        st25dv_read(st25_address, CCFILE_LENGTH + 1, l_value, 0x03);
+        st25dv_read(st25dv.user_address, CCFILE_LENGTH + 1, l_value, 0x03);
         uint16_t old_length = 0;
         uint16_t total_length;
 
@@ -99,7 +98,7 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
             *(l_value + 2) = total_length & 0xFF;
 
             //Update the value
-            st25dv_write(st25_address, CCFILE_LENGTH + 1, l_value, 0x03);
+            st25dv_write(st25dv.user_address, CCFILE_LENGTH + 1, l_value, 0x03);
         } else {
             //The l value is 1 byte long
             old_length = *l_value;
@@ -114,10 +113,10 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
 
                 //Copy and move the existing records
                 uint8_t *st25dv_content = malloc(old_length);
-                st25dv_read(st25_address, CCFILE_LENGTH + 2, st25dv_content, old_length);
-                st25dv_write(st25_address, CCFILE_LENGTH + 1, l_value, 0x03);
+                st25dv_read(st25dv.user_address, CCFILE_LENGTH + 2, st25dv_content, old_length);
+                st25dv_write(st25dv.user_address, CCFILE_LENGTH + 1, l_value, 0x03);
                 vTaskDelay(100 / portTICK_PERIOD_MS);
-                st25dv_write(st25_address, CCFILE_LENGTH + 4, st25dv_content, old_length);
+                st25dv_write(st25dv.user_address, CCFILE_LENGTH + 4, st25dv_content, old_length);
                 record_address += 2;
                 free(st25dv_content);
             } else {
@@ -125,17 +124,17 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
                 *l_value = total_length;
 
                 //Update the value
-                st25dv_write_byte(st25_address, CCFILE_LENGTH + 1, *l_value);
+                st25dv_write_byte(st25dv.user_address, CCFILE_LENGTH + 1, *l_value);
             }
         }
         free(l_value);
     }
     vTaskDelay(100 / portTICK_PERIOD_MS);
-    st25dv_write(st25_address, record_address, record_data, data - record_data);
+    st25dv_write(st25dv.user_address, record_address, record_data, data - record_data);
     vTaskDelay(100 / portTICK_PERIOD_MS);
     //Add terminator
     if (me) {
-        st25dv_write_byte(st25_address, record_address + (data - record_data), ST25DV_TYPE5_TERMINATOR_TLV);
+        st25dv_write_byte(st25dv.user_address, record_address + (data - record_data), ST25DV_TYPE5_TERMINATOR_TLV);
     }
 
     *address = record_address + (data - record_data);
@@ -144,18 +143,18 @@ static esp_err_t st25dv_ndef_write_content(uint8_t st25_address, uint16_t *addre
     return ESP_OK;
 }
 
-esp_err_t st25dv_ndef_write_app_launcher_record(uint8_t st25_address, uint16_t *address, bool mb, bool me, char *app_package) {
+esp_err_t st25dv_ndef_write_app_launcher_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, char *app_package) {
     char record_type[] = NDEF_APP_LAUNCHER_TYPE;
     std25dv_ndef_record record = {
             NDEF_ST25DV_TNF_EXTERNAL,
             record_type,
             app_package
     };
-    st25dv_ndef_write_content(st25_address, address, mb, me, record);
+    st25dv_ndef_write_content(st25dv, address, mb, me, record);
     return ESP_OK;
 }
 
-esp_err_t st25dv_ndef_write_json_record(uint8_t st25_address, uint16_t *address, bool mb, bool me, cJSON *json_data) {
+esp_err_t st25dv_ndef_write_json_record(st25dv_config st25dv, uint16_t *address, bool mb, bool me, cJSON *json_data) {
     char record_type[] = NDEF_JSON_TYPE;
     char *json = cJSON_PrintUnformatted(json_data);
     std25dv_ndef_record record = {
@@ -163,16 +162,16 @@ esp_err_t st25dv_ndef_write_json_record(uint8_t st25_address, uint16_t *address,
             record_type,
             json
     };
-    st25dv_ndef_write_content(st25_address, address, mb, me, record);
+    st25dv_ndef_write_content(st25dv, address, mb, me, record);
     free(json);
     return ESP_OK;
 }
 
-esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_ndef_record *output_records, uint8_t *record_count) {
+esp_err_t st25dv_ndef_read(st25dv_config st25dv, uint8_t record_num, std25dv_ndef_record *output_records, uint8_t *record_count) {
     //Get size of the first area
     uint8_t enda1 = 0;
     *record_count = 0;
-    st25dv_read_byte(ST25DV_SYSTEM_ADDRESS, REG_ENDA1, &enda1);
+    st25dv_read_byte(st25dv.system_address, REG_ENDA1, &enda1);
 
     //Convert the block value in bytes
     enda1 = enda1 * 32 + 31;
@@ -181,7 +180,7 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
     //Read Type5 Tag TLV-Format
     uint8_t *tlv = malloc(4);
     uint16_t l_value = 0;
-    ESP_ERROR_CHECK(st25dv_read(st25_address, address, tlv, 4));
+    ESP_ERROR_CHECK(st25dv_read(st25dv.user_address, address, tlv, 4));
     ST25DV_CHECK(tlv[0] == ST25DV_TYPE5_NDEF_MESSAGE)
 
     if (*(tlv + 1) == 0xFF) {
@@ -203,7 +202,7 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
         bool message_begin, message_end, chunk_flag, short_record, id_length;
 
         //Get header content
-        ESP_ERROR_CHECK(st25dv_read_byte(st25_address, address, &v_value));
+        ESP_ERROR_CHECK(st25dv_read_byte(st25dv.user_address, address, &v_value));
         address++;
         message_begin = NDEF_RECORD_HEADER_BIT(v_value, NDEF_ST25DV_MB);
         message_end = NDEF_RECORD_HEADER_BIT(v_value, NDEF_ST25DV_ME);
@@ -214,7 +213,7 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
 
         //Get type length
         uint8_t type_length;
-        ESP_ERROR_CHECK(st25dv_read_byte(st25_address, address, &type_length));
+        ESP_ERROR_CHECK(st25dv_read_byte(st25dv.user_address, address, &type_length));
         address++;
 
         //Get payload length
@@ -222,13 +221,13 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
         if (short_record) {
             //Payload length is 1 byte
             uint8_t data;
-            ESP_ERROR_CHECK(st25dv_read_byte(st25_address, address, &data));
+            ESP_ERROR_CHECK(st25dv_read_byte(st25dv.user_address, address, &data));
             payload_length = data;
             address++;
         } else {
             //Payload length is 4 byte
             uint8_t *data = malloc(4);
-            ESP_ERROR_CHECK(st25dv_read(st25_address, address, data, 4));
+            ESP_ERROR_CHECK(st25dv_read(st25dv.user_address, address, data, 4));
             payload_length |= *data << 24;
             payload_length |= *(data + 1) << 16;
             payload_length |= *(data + 2) << 8;
@@ -250,14 +249,14 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
 
             //Get type and add it to the output
             char *type = malloc(type_length + 1);
-            ESP_ERROR_CHECK(st25dv_read(st25_address, address,  (uint8_t *) type, type_length));
+            ESP_ERROR_CHECK(st25dv_read(st25dv.user_address, address,  (uint8_t *) type, type_length));
             *(type + type_length) = 0x00;
             output_records->type =  type;
             address += type_length;
 
             //Get payload and add it to the output
             char *payload = malloc(payload_length + 1);
-            ESP_ERROR_CHECK(st25dv_read(st25_address, address, (uint8_t *) payload, payload_length));
+            ESP_ERROR_CHECK(st25dv_read(st25dv.user_address, address, (uint8_t *) payload, payload_length));
             *(payload + payload_length) = 0x00;
             output_records->payload = payload;
             address += payload_length;
@@ -267,7 +266,7 @@ esp_err_t st25dv_ndef_read(uint8_t st25_address, uint8_t record_num, std25dv_nde
 
         //Get the end
         uint8_t end_char = 0;
-        ESP_ERROR_CHECK(st25dv_read_byte(st25_address, address, &end_char));
+        ESP_ERROR_CHECK(st25dv_read_byte(st25dv.user_address, address, &end_char));
         if (end_char == ST25DV_TYPE5_TERMINATOR_TLV) {
             return ESP_OK;
         }
