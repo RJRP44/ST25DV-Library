@@ -4,6 +4,9 @@
  * This program is distributed under the MIT License
  */
 
+#ifndef ST25DV_LIBRARY_NDEF
+#define ST25DV_LIBRARY_NDEF
+
 #include <esp_err.h>
 #include <stdbool.h>
 #include <cJson.h>
@@ -50,3 +53,5 @@ esp_err_t st25dv_ndef_write_json_record(st25dv_config st25dv, uint16_t *address,
 
 esp_err_t st25dv_ndef_read(st25dv_config st25dv, uint8_t record_num, std25dv_ndef_record *output_records, uint8_t *record_count);
 esp_err_t st25dv_ndef_delete_records(std25dv_ndef_record *record);
+
+#endif //ST25DV_LIBRARY_NDEF

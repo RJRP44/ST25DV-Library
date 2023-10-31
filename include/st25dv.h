@@ -4,6 +4,9 @@
  * This program is distributed under the MIT License
  */
 
+#ifndef ST25DV_LIBRARY
+#define ST25DV_LIBRARY
+
 #include <stdint.h>
 #include <driver/i2c.h>
 #include "esp_err.h"
@@ -37,3 +40,5 @@ esp_err_t st25dv_read(uint8_t st25_address, uint16_t address, uint8_t *data, siz
 
 esp_err_t st25dv_open_session(uint8_t st25_address, uint64_t password);
 esp_err_t st25dv_is_session_opened(uint8_t st25_address, bool *bit);
+
+#endif //ST25DV_LIBRARY

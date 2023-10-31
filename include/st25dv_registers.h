@@ -4,6 +4,9 @@
  * This program is distributed under the MIT License
  */
 
+#ifndef ST25DV_LIBRARY_REGISTERS
+#define ST25DV_LIBRARY_REGISTERS
+
 /**************************
  *  REGISTERS DEFINITION  *
  **************************/
@@ -124,3 +127,5 @@
 #define BIT_I2CSS_MEM3_READ (1 << 5)
 #define BIT_I2CSS_MEM4_WRITE (1 << 6)
 #define BIT_I2CSS_MEM4_READ (1 << 7)
+
+#endif //ST25DV_LIBRARY_REGISTERS
