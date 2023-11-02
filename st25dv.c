@@ -116,7 +116,7 @@ esp_err_t st25dv_read(uint8_t st25_address, uint16_t address, uint8_t *data, siz
 
     //St25 Read sequence :
     i2c_master_write_byte(cmd, (st25_address << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN);
-    i2c_master_write_byte(cmd, address << 8, ACK_CHECK_EN);
+    i2c_master_write_byte(cmd, address >> 8, ACK_CHECK_EN);
     i2c_master_write_byte(cmd, address & 0xFF, ACK_CHECK_EN);
     i2c_master_start(cmd);
     i2c_master_write_byte(cmd, (st25_address << 1) | I2C_MASTER_READ, ACK_CHECK_EN);
