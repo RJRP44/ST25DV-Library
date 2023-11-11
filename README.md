@@ -1,7 +1,4 @@
-<h1 align="center"> ST25DV library for ESP32  </h1>
-<p align="center">
-<img align="center" src="https://seeklogo.com/images/E/espressif-systems-logo-1350B9E771-seeklogo.com.png" alt="espressif logo" width="40">
-</p>
+# ST25DV library for ESP32
 
 This is a library for ST's [ST25DV-I2C series](https://www.st.com/en/nfc/st25dv-i2c-series-dynamic-nfc-tags.html). The ST25DV chip is an RFID/NFC dynamic tag. It can be accessed by any NFC smartphone or NFC/RFID HF reader, and also by an MCU (an esp32 for this library), using the I²C wired link.  
 
@@ -10,8 +7,35 @@ This is a library for ST's [ST25DV-I2C series](https://www.st.com/en/nfc/st25dv-
 > This Library is **not** compatible with Arduino framework
 
 ## 📌 Contents
-* [Ndef](#ndef)
-* [Example](#example)
+* [Getting started](#Getting-started)
+  * [Wiring for the ST25DV 🔌](#Wiring-the-ST25DV-)
+  * [Library Installation](#library-installation-)
+  * [Ndef](#ndef)
+* [Examples](#examples-)
+
+## Getting started
+### Wiring the ST25DV 🔌
+
+The wiring is made with the [reference board](https://www.st.com/en/evaluation-tools/ant7-t-25dv64kc.html). Check the [datasheet](https://www.st.com/resource/en/datasheet/st25dv64kc.pdf) to wire directly the chip.
+
+| ST25DV Pins | ESP32S3 Pins                                 |           
+|-------------|----------------------------------------------|
+| GND         | GND                                          |
+| VCC         | 3v3                                          |
+| SCL         | GPIO2, 47 kΩ pullup resistor required to 3v3 |
+| SDA         | GPIO1, 47 kΩ pullup resistor required to 3v3 |
+| GPO (RF)    | Not used in the examples                     |
+### Library Installation 📥
+
+The library is available at https://components.espressif.com/components/rjrp44/st25dv.
+
+So, you can use the [IDF Component Manager](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/tools/idf-component-manager.html) to easily import this library into your project.
+To add this component to your project, run:
+
+```log
+idf.py add-dependency "rjrp44/st25dv^0.1.0" 
+```
+
 ### Ndef
 This library contains a basic implementation of ndef to read or write data. However, more specific data types like uri and text require their formats to be added.
 
@@ -64,7 +88,7 @@ st25dv_ndef_read(st25dv_config, record_num,read, &record_count);
 //Delete record after use
 st25dv_ndef_delete_records(read);
 ```
-### Example
+## Examples 📄
 You can find in the `📁 /examples` folder an example project showcasing the main features of the library to help you understand how it works.
 
 ## 📝 License

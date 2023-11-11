@@ -1,2 +1,7 @@
 version: "0.1.0"
-description: A st25dv library for esp32 using the esp-idf framework.
+description: "A st25dv library for esp32 using the esp-idf framework."
+url: "https://github.com/RJRP44/ST25DV-Library"
+repository: "https://github.com/RJRP44/ST25DV-Library"
+license: "MIT"
+dependencies:
+  idf: ">=5.0"

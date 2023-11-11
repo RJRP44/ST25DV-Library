@@ -1,0 +1,5 @@
+version: "1.0.1"
+description: "ST25DV basic example"
+dependencies:
+  rjrp44/st25dv:
+    version : "~0.1.0"
