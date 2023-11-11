@@ -1,4 +1,4 @@
-version: "0.1.2"
+version: "0.1.3"
 description: "A st25dv library for esp32 using the esp-idf framework."
 url: "https://github.com/RJRP44/ST25DV-Library"
 repository: "https://github.com/RJRP44/ST25DV-Library"
