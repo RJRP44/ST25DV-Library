@@ -18,13 +18,13 @@ This is a library for ST's [ST25DV-I2C series](https://www.st.com/en/nfc/st25dv-
 
 The wiring is made with the [reference board](https://www.st.com/en/evaluation-tools/ant7-t-25dv64kc.html). Check the [datasheet](https://www.st.com/resource/en/datasheet/st25dv64kc.pdf) to wire directly the chip.
 
-| ST25DV Pins | ESP32S3 Pins                                 |           
-|-------------|----------------------------------------------|
-| GND         | GND                                          |
-| VCC         | 3v3                                          |
-| SCL         | GPIO2, 47 kΩ pullup resistor required to 3v3 |
-| SDA         | GPIO1, 47 kΩ pullup resistor required to 3v3 |
-| GPO (RF)    | Not used in the examples                     |
+| ST25DV Pins | ESP32S3 Pins                                  |           
+|-------------|-----------------------------------------------|
+| GND         | GND                                           |
+| VCC         | 3v3                                           |
+| SCL         | GPIO2, 4.7 kΩ pullup resistor required to 3v3 |
+| SDA         | GPIO1, 4.7 kΩ pullup resistor required to 3v3 |
+| GPO (RF)    | Not used in the examples                      |
 ### Library Installation 📥
 
 The library is available at https://components.espressif.com/components/rjrp44/st25dv.
